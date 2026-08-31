@@ -1,0 +1,879 @@
+<!--
+  PIXEL / Landing Page
+  Design system derivado do Manual de Marca (Edição 02, 2026)
+
+  TOKENS
+  Cor:
+    --midnight  #1A2E40  fundo noturno profundo (estrutura, 60%)
+    --navy      #26425A  azul marinho, cor principal de superfície (60%)
+    --sky       #86A8CF  suporte frio, grades, bordas, translúcido (15%)
+    --pastel    #E1CBD7  base clara, respiro, contraste (15%)
+    --mauve     #C38EB4  acento: CTA e módulo de assinatura, sólido e raro (10%)
+    --lavender  #B9A4D9  extremo do degradê mauve→lavanda (uso pontual, nunca sozinho)
+  Tipografia:
+    Display  : "Unbounded" 700/800, caixa alta, letter-spacing aberto (logotipo, títulos)
+    Texto    : "Karla" 400/600, humanista, alta legibilidade em blocos longos
+    Mono     : "IBM Plex Mono" 400/700, métricas, códigos de cor, rodapé técnico
+  Layout:
+    Página longa em faixas alternando fundo noturno (estrutura/impacto) e base clara
+    (respiro); grade de 12 colunas com módulos de canto reto absoluto (0px), nunca
+    arredondados; monograma "P" renderizado como malha real de pixels em canvas,
+    replicando a regra de alta densidade retilínea do manual (30×33 módulos,
+    um módulo de acento rotacionado 6° em degradê mauve→lavanda).
+-->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pixel | Guias de Marca, Landing Pages &amp; Edições Criativas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --midnight:#1A2E40;
+    --navy:#26425A;
+    --navy-2:#213A50;
+    --sky:#86A8CF;
+    --pastel:#E1CBD7;
+    --pastel-2:#EAD9E1;
+    --mauve:#C38EB4;
+    --lavender:#B9A4D9;
+    --ink:#F4EEF2;          /* texto claro sobre fundo escuro */
+    --ink-soft:#C9D2DE;      /* texto secundário sobre escuro */
+    --ink-dark:#1F2B36;      /* texto sobre fundo claro */
+    --ink-dark-soft:#4C5A67; /* texto secundário sobre claro */
+    --line-on-dark: rgba(134,168,207,0.35);
+    --line-on-light: rgba(38,66,90,0.18);
+    --dust-opacity: 0.12;
+
+    --font-display:"Unbounded", "Arial Black", sans-serif;
+    --font-text:"Karla", "Segoe UI", sans-serif;
+    --font-mono:"IBM Plex Mono", "Consolas", monospace;
+
+    --container: 1180px;
+    --gutter: clamp(20px, 5vw, 64px);
+  }
+
+  /* Sistema de marca fixo, não reage a light/dark do sistema operacional,
+     pois a paleta e a hierarquia 60/15/10/15 são regra de identidade, não
+     preferência de exibição. Todas as cores são declaradas explicitamente. */
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--midnight);
+    color:var(--ink);
+    font-family:var(--font-text);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,canvas{display:block;max-width:100%;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--mauve);color:var(--midnight);}
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    font-weight:700;
+    margin:0;
+    text-wrap:balance;
+  }
+
+  .mono{
+    font-family:var(--font-mono);
+    letter-spacing:0.02em;
+  }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:16px;height:16px;
+    background:var(--mauve);
+    flex:none;
+  }
+
+  .container{
+    max-width:var(--container);
+    margin:0 auto;
+    padding-inline:var(--gutter);
+  }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--mauve);
+    outline-offset:3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ============ NAV ============ */
+  header.nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(26,46,64,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-on-dark);
+  }
+  .nav-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:76px;
+  }
+  .wordmark{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:var(--font-display);
+    font-size:19px;
+    letter-spacing:0.06em;
+  }
+  .wordmark .mark{
+    width:26px;height:26px;
+    background:var(--navy);
+    border:1px solid var(--sky);
+    position:relative;
+    flex:none;
+  }
+  .wordmark .mark::after{
+    content:"";
+    position:absolute;
+    width:9px;height:9px;
+    right:-3px;top:-3px;
+    background:linear-gradient(135deg,var(--mauve),var(--lavender));
+    transform:rotate(6deg);
+  }
+  .wordmark .dot{color:var(--mauve);}
+
+  nav.links{
+    display:flex;
+    gap:36px;
+    font-size:14px;
+    letter-spacing:0.02em;
+  }
+  nav.links a{
+    color:var(--ink-soft);
+    position:relative;
+    padding-bottom:4px;
+  }
+  nav.links a:hover{color:var(--ink);}
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-family:var(--font-display);
+    font-size:13.5px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    font-weight:700;
+    padding:15px 28px;
+    border:0;
+    border-radius:0; /* regra crítica: sem arredondamento */
+    cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+  }
+  .btn-cta{
+    background:var(--mauve);
+    color:var(--midnight);
+    box-shadow:0 0 0 1px var(--mauve);
+  }
+  .btn-cta:hover{
+    background:var(--lavender);
+    transform:translateY(-2px);
+  }
+  .btn-ghost{
+    background:transparent;
+    color:var(--ink);
+    box-shadow:0 0 0 1px var(--sky);
+    padding:14px 26px;
+  }
+  .btn-ghost:hover{
+    box-shadow:0 0 0 1px var(--ink);
+  }
+  .btn-small{padding:11px 18px;font-size:12px;}
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;
+    background:var(--midnight);
+    overflow:hidden;
+    padding-top:clamp(64px,9vw,110px);
+    padding-bottom:clamp(64px,9vw,120px);
+  }
+  #dust{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+  }
+  .hero-grid{
+    position:relative;
+    z-index:1;
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap:clamp(32px,6vw,64px);
+    align-items:center;
+  }
+  .hero-copy .eyebrow{color:var(--sky);margin-bottom:22px;}
+  .hero h1{
+    font-size:clamp(38px, 5.4vw, 68px);
+    line-height:1.04;
+    color:var(--ink);
+  }
+  .hero h1 em{
+    font-style:normal;
+    color:var(--mauve);
+  }
+  .hero p.lede{
+    font-size:clamp(16px,1.6vw,19px);
+    color:var(--ink-soft);
+    max-width:52ch;
+    margin:26px 0 36px;
+  }
+  .hero-ctas{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .hero-proof{
+    margin-top:44px;
+    display:flex;
+    gap:34px;
+    flex-wrap:wrap;
+  }
+  .hero-proof .stat{font-family:var(--font-mono);}
+  .hero-proof .stat b{
+    display:block;
+    font-size:22px;
+    color:var(--ink);
+    font-weight:700;
+  }
+  .hero-proof .stat span{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+  }
+
+  .monogram-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  #monogram{
+    width:100%;
+    max-width:420px;
+    aspect-ratio:30/33;
+    filter:drop-shadow(0 30px 60px rgba(0,0,0,0.35));
+  }
+  .monogram-caption{
+    position:absolute;
+    bottom:-6px;
+    left:50%;
+    transform:translateX(-50%);
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--sky);
+    white-space:nowrap;
+    text-transform:uppercase;
+  }
+
+  /* ============ SECTION SCAFFOLD ============ */
+  section{padding-block:clamp(64px,9vw,110px);}
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:32px;
+    margin-bottom:clamp(40px,5vw,64px);
+    flex-wrap:wrap;
+  }
+  .section-head h2{
+    font-size:clamp(28px,3.4vw,42px);
+    max-width:16ch;
+  }
+  .section-head p{
+    max-width:38ch;
+    font-size:15.5px;
+  }
+  .on-dark .eyebrow{color:var(--sky);}
+  .on-dark .section-head p{color:var(--ink-soft);}
+  .on-light .eyebrow{color:var(--navy);}
+  .on-light h2{color:var(--ink-dark);}
+  .on-light .section-head p{color:var(--ink-dark-soft);}
+
+  /* ============ PILARES ============ */
+  .pillars-section{background:var(--pastel);color:var(--ink-dark);}
+  .pillars{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--line-on-light);
+    border:1px solid var(--line-on-light);
+  }
+  .pillar{
+    background:var(--pastel);
+    padding:38px 32px 34px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    position:relative;
+  }
+  .pillar .num{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--navy);
+    letter-spacing:0.08em;
+  }
+  .pillar .icon{
+    width:44px;height:44px;
+    border:1px solid var(--navy);
+    position:relative;
+    background:
+      linear-gradient(var(--navy) 1px, transparent 1px) 0 0/11px 11px,
+      linear-gradient(90deg, var(--navy) 1px, transparent 1px) 0 0/11px 11px;
+    background-color:transparent;
+    opacity:0.85;
+  }
+  .pillar.accent .icon{
+    background:linear-gradient(135deg,var(--mauve),var(--lavender));
+    border-color:var(--mauve);
+  }
+  .pillar h3{
+    font-size:19px;
+    letter-spacing:0.02em;
+    color:var(--ink-dark);
+  }
+  .pillar p{
+    font-size:14.8px;
+    color:var(--ink-dark-soft);
+    margin:0;
+  }
+  .pillar .tag{
+    margin-top:auto;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.05em;
+    color:var(--navy);
+    text-transform:uppercase;
+    padding-top:14px;
+    border-top:1px solid var(--line-on-light);
+  }
+
+  /* ============ METRICS ============ */
+  .metrics-section{
+    background:var(--navy);
+    position:relative;
+    overflow:hidden;
+  }
+  .metrics-section::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(var(--line-on-dark) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-on-dark) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.35;
+    pointer-events:none;
+  }
+  .metrics-section .container{position:relative;}
+  .metrics-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border:1px solid var(--line-on-dark);
+  }
+  .metric{
+    padding:34px 26px;
+    border-right:1px solid var(--line-on-dark);
+    border-bottom:1px solid var(--line-on-dark);
+  }
+  .metric:nth-child(4n){border-right:0;}
+  .metric .value{
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:clamp(30px,3.4vw,44px);
+    color:var(--ink);
+    display:flex;
+    align-items:baseline;
+    gap:4px;
+  }
+  .metric .value .plus{color:var(--mauve);}
+  .metric .label{
+    margin-top:10px;
+    font-size:13px;
+    color:var(--ink-soft);
+    max-width:22ch;
+  }
+  .metric .code{
+    margin-top:16px;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    color:var(--sky);
+    letter-spacing:0.04em;
+    opacity:0.8;
+  }
+
+  .metrics-quote{
+    margin-top:48px;
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:24px;
+    align-items:flex-start;
+    border-top:1px solid var(--line-on-dark);
+    padding-top:40px;
+  }
+  .metrics-quote .swatch{
+    width:52px;height:52px;
+    background:linear-gradient(135deg,var(--mauve),var(--lavender));
+    transform:rotate(6deg);
+    flex:none;
+  }
+  .metrics-quote p{
+    font-size:19px;
+    color:var(--ink);
+    max-width:60ch;
+    font-family:var(--font-text);
+  }
+  .metrics-quote cite{
+    display:block;
+    font-style:normal;
+    margin-top:14px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  /* ============ FOOTER CTA ============ */
+  .footer-cta{
+    background:var(--midnight);
+    position:relative;
+    overflow:hidden;
+    text-align:center;
+  }
+  .footer-cta::after{
+    content:"";
+    position:absolute;
+    left:50%;top:0;
+    transform:translateX(-50%);
+    width:min(900px,140%);
+    aspect-ratio:1/1;
+    background:radial-gradient(circle, rgba(195,142,180,0.16), transparent 65%);
+    pointer-events:none;
+  }
+  .footer-cta .container{position:relative;}
+  .footer-cta .eyebrow{justify-content:center;color:var(--sky);margin-bottom:22px;}
+  .footer-cta h2{
+    font-size:clamp(30px,5vw,58px);
+    max-width:18ch;
+    margin-inline:auto;
+    color:var(--ink);
+  }
+  .footer-cta h2 em{font-style:normal;color:var(--mauve);}
+  .footer-cta p{
+    max-width:52ch;
+    margin:22px auto 40px;
+    color:var(--ink-soft);
+    font-size:17px;
+  }
+  .footer-cta .hero-ctas{justify-content:center;}
+
+  footer.site-footer{
+    background:var(--midnight);
+    border-top:1px solid var(--line-on-dark);
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr 1fr;
+    gap:32px;
+    padding-block:52px;
+  }
+  .footer-grid .wordmark{margin-bottom:16px;}
+  .footer-grid p{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    max-width:32ch;
+  }
+  .footer-col h4{
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--sky);
+    margin:0 0 14px;
+  }
+  .footer-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .footer-col a{font-size:13.5px;color:var(--ink-soft);}
+  .footer-col a:hover{color:var(--ink);}
+  .footer-bottom{
+    border-top:1px solid var(--line-on-dark);
+    padding-block:20px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.04em;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;}
+    .monogram-wrap{order:-1;max-width:280px;margin:0 auto;}
+    nav.links{display:none;}
+    .pillars{grid-template-columns:1fr;}
+    .metrics-grid{grid-template-columns:repeat(2,1fr);}
+    .metric:nth-child(2n){border-right:0;}
+    .metric:nth-child(4n){border-right:1px solid var(--line-on-dark);}
+    .footer-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:520px){
+    .metrics-grid{grid-template-columns:1fr;}
+    .metric{border-right:0 !important;}
+    .footer-grid{grid-template-columns:1fr;}
+  }
+
+  .container{overflow-x:visible;}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-row">
+    <a href="#top" class="wordmark"><span class="mark" aria-hidden="true"></span>PIXEL<span class="dot">.</span></a>
+    <nav class="links" aria-label="Navegação principal">
+      <a href="#sistema">O Sistema</a>
+      <a href="#performance">Como Trabalhamos</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a href="#contato" class="btn btn-cta btn-small">Falar Com a Pixel</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" aria-label="Introdução">
+    <canvas id="dust" aria-hidden="true"></canvas>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Guias de Marca · Landing Pages · Edições Criativas</p>
+        <h1>Transformamos Sua Marca em <em>Sistema</em> e Presença Real</h1>
+        <p class="lede">A Pixel é uma agência que constrói o manual de marca, a landing page e as peças criativas que sustentam sua presença digital, com a mesma régua: precisão modular na entrega, decisão humana no resultado. Nada por acaso: cada módulo da sua identidade existe por escolha.</p>
+        <div class="hero-ctas">
+          <a href="#contato" class="btn btn-cta">Quero Minha Marca com Sistema</a>
+          <a href="#sistema" class="btn btn-ghost">Conhecer o Sistema</a>
+        </div>
+        <div class="hero-proof">
+          <div class="stat"><b>Sistema</b><span>Identidade documentada, não solta</span></div>
+          <div class="stat"><b>Precisão</b><span>Grade, cor e tipografia com regra</span></div>
+          <div class="stat"><b>Entrega</b><span>Guia, página e peças em um único fluxo</span></div>
+        </div>
+      </div>
+      <div class="monogram-wrap">
+        <canvas id="monogram" width="300" height="330" role="img" aria-label="Monograma P da Pixel, construído como malha de módulos quadrados"></canvas>
+        <span class="monogram-caption mono">malha 30×33 · raio de canto = 0</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SISTEMA / PILARES ============ -->
+  <section id="sistema" class="pillars-section" aria-label="Nossos pilares">
+    <div class="container">
+      <div class="section-head on-light">
+        <div>
+          <p class="eyebrow">02 / O Sistema</p>
+          <h2>Três entregas, uma régua de precisão</h2>
+        </div>
+        <p>Cada pilar da Pixel resolve uma parte da mesma equação: transformar identidade em consistência, presença e conteúdo que convertem.</p>
+      </div>
+
+      <div class="pillars">
+        <article class="pillar">
+          <span class="num mono">01 / IDENTIDADE</span>
+          <span class="icon" aria-hidden="true"></span>
+          <h3>Guia de Marca</h3>
+          <p>Manual de identidade completo: símbolo, paleta, tipografia e regras de aplicação, para que sua marca nunca dependa de memória, só de sistema.</p>
+          <span class="tag mono">Logo · Paleta · Tipografia</span>
+        </article>
+        <article class="pillar accent">
+          <span class="num mono">02 / PRESENÇA</span>
+          <span class="icon" aria-hidden="true"></span>
+          <h3>Landing Pages</h3>
+          <p>Páginas sob medida, rápidas e construídas com a mesma precisão modular do seu guia de marca, pensadas para apresentar e converter.</p>
+          <span class="tag mono">UI · Copy · Conversão</span>
+        </article>
+        <article class="pillar">
+          <span class="num mono">03 / CONTEÚDO</span>
+          <span class="icon" aria-hidden="true"></span>
+          <h3>Edições Criativas</h3>
+          <p>Peças, social media e edições que mantêm a identidade viva em todo canal, do feed ao anúncio, sempre dentro do mesmo sistema visual.</p>
+          <span class="tag mono">Social · Criativo · Peças</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MÉTRICAS / PROVA DE PERFORMANCE ============ -->
+  <section id="performance" class="metrics-section" aria-label="Como trabalhamos">
+    <div class="container">
+      <div class="section-head on-dark">
+        <div>
+          <p class="eyebrow">03 / Como Trabalhamos</p>
+          <h2>Um fluxo, quatro módulos</h2>
+        </div>
+        <p>O mesmo processo modular do nosso próprio manual de marca aplicado a cada projeto que assumimos.</p>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="value">01</div>
+          <div class="label">Diagnóstico: mapeamos identidade atual, público e objetivos do projeto</div>
+          <div class="code">#26425A / STEP.DIAGNÓSTICO</div>
+        </div>
+        <div class="metric">
+          <div class="value">02</div>
+          <div class="label">Sistema: construímos o guia de marca, com paleta, tipografia e regras de aplicação</div>
+          <div class="code">#C38EB4 / STEP.SISTEMA</div>
+        </div>
+        <div class="metric">
+          <div class="value">03</div>
+          <div class="label">Construção: landing page e peças criativas seguindo o sistema definido</div>
+          <div class="code">#86A8CF / STEP.CONSTRUÇÃO</div>
+        </div>
+        <div class="metric">
+          <div class="value">04</div>
+          <div class="label">Entrega: produzimos criativos, editamos conteúdo e cuidamos do tráfego pago para manter sua marca sempre ativa</div>
+          <div class="code">#E1CBD7 / STEP.ENTREGA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER CTA ============ -->
+  <!--
+    TODO CONTATO — substituir antes de publicar:
+      [WHATSAPP]  número no formato internacional só com dígitos, ex.: 5511999999999
+      [EMAIL]     e-mail de contato real
+      [TELEFONE]  telefone de exibição + link tel: (só dígitos)
+      [INSTAGRAM] / [LINKEDIN] / [BEHANCE]  URLs completas (ou remover o item)
+    Os marcadores aparecem em: seção #contato, rodapé e rodapé inferior.
+  -->
+  <section id="contato" class="footer-cta" aria-label="Chamada final">
+    <div class="container">
+      <p class="eyebrow">04 / Vamos Construir</p>
+      <h2>Sua marca merece um <em>sistema</em>, não um logo solto</h2>
+      <p>Marque uma conversa de 30 minutos com a Pixel. Saímos dela com um diagnóstico honesto da sua identidade, da sua landing page e do que priorizar primeiro.</p>
+      <div class="hero-ctas">
+        <a href="https://wa.me/[WHATSAPP]" class="btn btn-cta">Falar no WhatsApp</a>
+        <a href="mailto:[EMAIL]" class="btn btn-ghost">[EMAIL]</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <a href="#top" class="wordmark"><span class="mark" aria-hidden="true"></span>PIXEL<span class="dot">.</span></a>
+      <p>Agência de guias de marca, landing pages e edições criativas com intenção. Precisão modular, gesto humano de cor.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Estúdio</h4>
+      <ul>
+        <li><a href="#sistema">O Sistema</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Disciplinas</h4>
+      <ul>
+        <li><a href="#sistema">Guia de Marca</a></li>
+        <li><a href="#sistema">Landing Pages</a></li>
+        <li><a href="#sistema">Edições Criativas</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contato</h4>
+      <ul>
+        <li><a href="https://wa.me/[WHATSAPP]">WhatsApp</a></li>
+        <li><a href="mailto:[EMAIL]">[EMAIL]</a></li>
+        <li><a href="tel:[TELEFONE]">[TELEFONE]</a></li>
+        <li><a href="[INSTAGRAM]">Instagram</a></li>
+        <li><a href="[LINKEDIN]">LinkedIn</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© 2026 PIXEL STUDIO · TODOS OS DIREITOS RESERVADOS</span>
+    <span>26425A / C38EB4 / 86A8CF / E1CBD7 / 1A2E40</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Poeira de micro-pixels (hero) ---------- */
+  var dustCanvas = document.getElementById('dust');
+  var dctx = dustCanvas.getContext('2d');
+  var dust = [];
+  var colors = ['#86A8CF', '#C38EB4'];
+
+  function sizeDust(){
+    var hero = dustCanvas.closest('.hero');
+    var w = hero.clientWidth, h = hero.clientHeight;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dustCanvas.width = w * dpr;
+    dustCanvas.height = h * dpr;
+    dustCanvas.style.width = w + 'px';
+    dustCanvas.style.height = h + 'px';
+    dctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var count = Math.floor((w*h)/9000);
+    dust = [];
+    for(var i=0;i<count;i++){
+      dust.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        s: 2 + Math.random()*4,
+        c: colors[Math.random() < 0.7 ? 0 : 1],
+        o: 0.03 + Math.random()*0.12,
+        vy: 0.03 + Math.random()*0.06
+      });
+    }
+    drawDust(w,h);
+  }
+
+  function drawDust(w,h){
+    dctx.clearRect(0,0,w,h);
+    for(var i=0;i<dust.length;i++){
+      var p = dust[i];
+      dctx.globalAlpha = p.o;
+      dctx.fillStyle = p.c;
+      dctx.fillRect(Math.round(p.x), Math.round(p.y), p.s, p.s); /* cantos retos, sem suavização */
+    }
+    dctx.globalAlpha = 1;
+  }
+
+  function tickDust(){
+    var hero = dustCanvas.closest('.hero');
+    var h = hero.clientHeight, w = hero.clientWidth;
+    for(var i=0;i<dust.length;i++){
+      dust[i].y -= dust[i].vy;
+      if(dust[i].y < -6){ dust[i].y = h + 6; dust[i].x = Math.random()*w; }
+    }
+    drawDust(w,h);
+    if(!reduceMotion) requestAnimationFrame(tickDust);
+  }
+
+  sizeDust();
+  window.addEventListener('resize', sizeDust);
+  if(!reduceMotion){ requestAnimationFrame(tickDust); }
+
+  /* ---------- Monograma "P": malha retilínea de módulos ---------- */
+  var mCanvas = document.getElementById('monogram');
+  var mctx = mCanvas.getContext('2d');
+  var COLS = 30, ROWS = 33;
+
+  function drawMonogram(){
+    var rect = mCanvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    mCanvas.width = rect.width * dpr;
+    mCanvas.height = rect.height * dpr;
+    mctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var w = rect.width, h = rect.height;
+    var cell = w / COLS;
+    mctx.clearRect(0,0,w,h);
+
+    /* fundo do módulo */
+    mctx.fillStyle = '#213A50';
+    mctx.fillRect(0,0,w,h);
+    mctx.strokeStyle = 'rgba(134,168,207,0.25)';
+    mctx.lineWidth = 1;
+    mctx.strokeRect(0.5,0.5,w-1,h-1);
+
+    /* máscara da letra P desenhada em uma grade lógica de 30x33 */
+    function isSpine(c,r){ return c >= 5 && c <= 9 && r >= 3 && r <= 29; }
+    function isBowl(c,r){
+      var cx = 9, cy = 10, rx = 11, ry = 8;
+      var nx = (c-cx)/rx, ny = (r-cy)/ry;
+      var d = nx*nx+ny*ny;
+      return d <= 1 && d >= 0.42 && c >= 9;
+    }
+
+    var accentCol=-1, accentRow=-1, bestScore=-1;
+
+    for(var r=0;r<ROWS;r++){
+      for(var c=0;c<COLS;c++){
+        var on = isSpine(c,r) || isBowl(c,r);
+        if(!on) continue;
+        /* candidato a módulo de acento: extremidade superior direita do arco */
+        var score = (c) - (r*0.4);
+        if(r < 8 && c > 14 && score > bestScore){ bestScore = score; accentCol = c; accentRow = r; }
+      }
+    }
+
+    for(var r=0;r<ROWS;r++){
+      for(var c=0;c<COLS;c++){
+        var on = isSpine(c,r) || isBowl(c,r);
+        if(!on) continue;
+        var x = c*cell, y = r*cell;
+        var isAccent = (c === accentCol && r === accentRow);
+
+        if(isAccent){
+          mctx.save();
+          var big = cell*1.4;
+          mctx.translate(x+cell/2, y+cell/2);
+          mctx.rotate(6*Math.PI/180);
+          var grad = mctx.createLinearGradient(-big/2,-big/2,big/2,big/2);
+          grad.addColorStop(0,'#C38EB4');
+          grad.addColorStop(1,'#B9A4D9');
+          mctx.fillStyle = grad;
+          mctx.fillRect(-big/2,-big/2,big,big); /* cantos retos, apenas girado, nunca arredondado */
+          mctx.restore();
+        } else {
+          var isSolidSpine = isSpine(c,r) && c <= 7;
+          mctx.fillStyle = isSolidSpine ? 'rgba(244,238,242,0.92)' : 'rgba(134,168,207,0.55)';
+          var pad = 0.9;
+          mctx.fillRect(x+pad, y+pad, cell-pad*2, cell-pad*2);
+        }
+      }
+    }
+  }
+
+  drawMonogram();
+  window.addEventListener('resize', drawMonogram);
+})();
+</script>
+
+</body>
+</html>
