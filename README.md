@@ -1,33 +1,27 @@
 # PIXEL — Landing Page
 
-Site estático de página única (`index.html`, sem build). Pronto para GitHub Pages.
+Site estático de página única (`index.html`, sem build), hospedado no GitHub Pages.
 
-## Antes de publicar: preencher contato
+## Contato (no `index.html`)
 
-Procure os marcadores no `index.html` e substitua todos:
+- WhatsApp: +55 (64) 98139-0813 → `https://wa.me/5564981390813`
+- E-mail: contatopixelagency@gmail.com
+- Instagram: [@pixelagency.jpg](https://instagram.com/pixelagency.jpg)
 
-| Marcador       | O que colocar                                              |
-| -------------- | --------------------------------------------------------- |
-| `[WHATSAPP]`   | número internacional só com dígitos, ex.: `5511999999999` |
-| `[EMAIL]`      | e-mail de contato                                          |
-| `[TELEFONE]`   | telefone (usado em `tel:` e como texto)                    |
-| `[INSTAGRAM]`  | URL completa do perfil (ou remover a linha)                |
-| `[LINKEDIN]`   | URL completa (ou remover a linha)                          |
+## Publicar / atualizar no GitHub Pages
 
-Aparecem na seção `#contato` e no rodapé. Enquanto houver `[` `]` no arquivo, ainda falta preencher.
+Deploy automático: qualquer `git push` para a branch `main` atualiza o site.
 
-## Publicar no GitHub Pages
+```bash
+git add -A
+git commit -m "..."
+git push
+```
 
-1. Criar o repositório no GitHub (ex.: `site-pixel`).
-2. No diretório do projeto:
-   ```bash
-   git remote add origin https://github.com/<usuario>/<repo>.git
-   git push -u origin main
-   ```
-3. GitHub → repositório → **Settings › Pages** → *Source*: **Deploy from a branch** → branch `main`, pasta `/ (root)` → **Save**.
-4. Em ~1 min o site fica em `https://<usuario>.github.io/<repo>/`.
+Configuração inicial do Pages (uma vez): repositório → **Settings › Pages** →
+*Source*: **Deploy from a branch** → branch `main`, pasta `/ (root)` → **Save**.
 
 ### Domínio próprio (opcional)
 
-Criar arquivo `CNAME` na raiz com o domínio (ex.: `pixel.studio`), commitar, e apontar o DNS
-(registro `A`/`ALIAS`) conforme a doc do GitHub Pages.
+Criar arquivo `CNAME` na raiz com o domínio, commitar, e apontar o DNS conforme a
+documentação do GitHub Pages.
