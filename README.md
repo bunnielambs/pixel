@@ -1,6 +1,10 @@
 # PIXEL — Landing Page
 
-Site estático de página única (`index.html`, sem build), hospedado no GitHub Pages.
+Site estático de página única (`index.html`, sem build).
+
+- **Site ao vivo:** https://pixelagencyjpg.netlify.app
+- **Hospedagem:** Netlify (conta rafaellamagalhaes51@gmail.com), projeto `pixelagencyjpg`, deploy manual (Netlify Drop — repositório Git *não* vinculado)
+- **Repositório:** https://github.com/bunnielambs/pixel (cópia do código; não dispara deploy)
 
 ## Contato (no `index.html`)
 
@@ -8,20 +12,14 @@ Site estático de página única (`index.html`, sem build), hospedado no GitHub 
 - E-mail: contatopixelagency@gmail.com
 - Instagram: [@pixelagency.jpg](https://instagram.com/pixelagency.jpg)
 
-## Publicar / atualizar no GitHub Pages
+## Como republicar após uma alteração
 
-Deploy automático: qualquer `git push` para a branch `main` atualiza o site.
-
-```bash
-git add -A
-git commit -m "..."
-git push
-```
-
-Configuração inicial do Pages (uma vez): repositório → **Settings › Pages** →
-*Source*: **Deploy from a branch** → branch `main`, pasta `/ (root)` → **Save**.
+O deploy é manual (igual ao site da Noronha Advocacia): depois de editar os
+arquivos, subir a pasta em https://app.netlify.com/drop logado na conta do
+projeto, ou arrastar a pasta para o projeto `pixelagencyjpg` no painel do Netlify.
+Também vale versionar no GitHub com `git push`.
 
 ### Domínio próprio (opcional)
 
-Criar arquivo `CNAME` na raiz com o domínio, commitar, e apontar o DNS conforme a
-documentação do GitHub Pages.
+No painel do Netlify: **Domain management › Add a domain**, e apontar o DNS do
+registrador conforme as instruções exibidas.
